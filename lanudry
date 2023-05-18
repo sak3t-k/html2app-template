@@ -1,0 +1,55 @@
+from datetime import datetime
+
+class LaundryApp:
+    def __init__(self):
+        self.users = {}
+        self.orders = {}
+
+    def register_user(self, name, phone):
+        self.users[phone] = name
+        print(f"User {name} with phone number {phone} registered successfully.")
+
+    def schedule_pickup(self, phone, pickup_date):
+        if phone not in self.users:
+            print("User not found. Please register first.")
+            return
+
+        current_time = datetime.now()
+        if pickup_date < current_time.date():
+            print("Invalid pickup date. Please choose a future date.")
+            return
+
+        if phone in self.orders:
+            print("Pickup already scheduled for this user. Cannot schedule another pickup.")
+            return
+
+        self.orders[phone] = pickup_date
+        print(f"Pickup scheduled successfully for user {self.users[phone]} on {pickup_date}.")
+
+    def schedule_delivery(self, phone, delivery_date):
+        if phone not in self.users:
+            print("User not found. Please register first.")
+            return
+
+        if phone not in self.orders:
+            print("No pickup scheduled for this user. Cannot schedule delivery.")
+            return
+
+        current_time = datetime.now()
+        if delivery_date < current_time.date():
+            print("Invalid delivery date. Please choose a future date.")
+            return
+
+        pickup_date = self.orders[phone]
+        if delivery_date < pickup_date:
+            print("Invalid delivery date. Delivery date cannot be earlier than pickup date.")
+            return
+
+        del self.orders[phone]
+        print(f"Delivery scheduled successfully for user {self.users[phone]} on {delivery_date}.")
+
+# Example usage
+app = LaundryApp()
+app.register_user("John Doe", "1234567890")
+app.schedule_pickup("1234567890", datetime(2023, 5, 20).date())
+app.schedule_delivery("1234567890", datetime(2023, 5, 25).date())
